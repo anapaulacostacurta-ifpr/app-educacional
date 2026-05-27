@@ -83,7 +83,7 @@ function openModule(id, role) {
     const iframe = document.getElementById('content-iframe');
     // Define o caminho do arquivo: ex: ../binarios/binarios.html
     // Ajuste aqui para o nome real dos seus arquivos de conteúdo
-    const page = role === 'professor' ? `../${id}/ajustar_${id}.html` : `../${id}/${id}.html`;
+    const page = role === 'professor' ? `../${id}/ajustar_${id}.html` : `../binarios/${id}.html`;
     
     iframe.src = page;
 }
