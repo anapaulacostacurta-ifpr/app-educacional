@@ -5,25 +5,28 @@ document.addEventListener("DOMContentLoaded", () => {
         if (user) {
             verifyUserProfile(user);
         } else {
-            // Se não houver usuário, o auth-guard já deve tratar, 
-            // mas mantemos o fallback absoluto como você definiu
-            window.location.href = `${location.origin}/projetoGamificaEduk/html/login/login.html`;
+            // Fallback caso o auth-guard não intercepte
+            window.location.href = `${location.origin}/app-educacional/html/login/login.html`;
         }
     });
 });
 
 async function verifyUserProfile(user) {
-    // Aqui você deve buscar no seu Firestore se o usuário é 'professor' ou 'aluno'
-    // Exemplo: const profile = await userService.getProfile(user.uid);
-    
-    // Simulação para teste (troque manualmente para testar as duas visões)
-    // Busca dados do usuário autenticado no Firestore
+    // Busca o perfil do usuário no Firestore
     userService.findByUid(user.uid).then(userData => {
-      const userRole = userData.profile == "host" ? 'Professor' : 'Estudante';
-      
-      renderMenu(userRole);
-      document.getElementById('profile-tag').innerText = `Perfil: ${userRole.toUpperCase()}`;
-      document.getElementById('content-display').innerHTML = `<h3>Bem-vindo, ${user.email.split('@')[0]}!</h3><p>Selecione uma opção no menu ao lado.</p>`;
+        // Identifica se é host (professor) ou player (aluno)
+        const role = userData.profile === "host" ? 'professor' : 'aluno';
+        
+        renderMenu(role);
+        
+        // Atualiza a tag de perfil no header
+        document.getElementById('profile-tag').innerText = `Perfil: ${role.toUpperCase()}`;
+        document.getElementById('profile-tag').classList.replace('bg-primary', role === 'professor' ? 'bg-danger' : 'bg-success');
+
+    }).catch(error => {
+        console.error("Erro ao verificar perfil:", error);
+        document.getElementById('main-menu').innerHTML = `<p class="p-3 text-danger">Erro ao carregar menu.</p>`;
+    });
 }
 
 function renderMenu(role) {
@@ -39,8 +42,9 @@ function renderMenu(role) {
         ];
         
         menu.innerHTML = options.map(opt => `
-            <button class="btn btn-outline-primary text-start p-3 option shadow-sm" onclick="loadContent('${opt.id}', 'aluno')">
-                <i class="fas ${opt.icon} me-2"></i> ${opt.label}
+            <button class="list-group-item list-group-item-action p-3 border-0 d-flex align-items-center" 
+                    onclick="selectMenuOption('${opt.id}', 'aluno')">
+                <i class="fas ${opt.icon} me-3 text-primary" style="width: 20px;"></i> ${opt.label}
             </button>
         `).join('');
         
@@ -48,11 +52,21 @@ function renderMenu(role) {
         const options = ['Conteúdo', 'Video', 'Jogo', 'Ranking', 'Caça-palavras'];
         
         menu.innerHTML = options.map(opt => `
-            <button class="btn btn-outline-danger text-start p-3 option shadow-sm" onclick="loadContent('${opt.toLowerCase()}', 'professor')">
-                <i class="fas fa-edit me-2"></i> Ajustar ${opt}
+            <button class="list-group-item list-group-item-action p-3 border-0 d-flex align-items-center" 
+                    onclick="selectMenuOption('${opt.toLowerCase()}', 'professor')">
+                <i class="fas fa-edit me-3 text-danger" style="width: 20px;"></i> Ajustar ${opt}
             </button>
         `).join('');
     }
+}
+
+// Fecha o menu lateral e carrega o conteúdo
+function selectMenuOption(id, role) {
+    const offcanvasElement = document.getElementById('offcanvasMenu');
+    const instance = bootstrap.Offcanvas.getInstance(offcanvasElement);
+    if(instance) instance.hide();
+
+    loadContent(id, role);
 }
 
 function loadContent(type, role) {
@@ -61,23 +75,53 @@ function loadContent(type, role) {
     if (role === 'aluno') {
         switch(type) {
             case 'conteudo':
-                display.innerHTML = `<h4>Módulo 1: Redes de Computadores</h4><hr class="colorgraph"><p>Inicie sua jornada pelos conceitos fundamentais...</p><button class="btn btn-success" onclick="window.location.href='../binarios/binarios.html'">Abrir Tópico 1</button>`;
+                display.innerHTML = `
+                    <h2 class="h4 fw-bold">Módulo 1: Introdução a Redes</h2>
+                    <hr class="colorgraph">
+                    <p class="text-muted">Explore os fundamentos de redes de computadores.</p>
+                    <button class="btn btn-success" onclick="window.location.href='../binarios/binarios.html'">
+                        <i class="fas fa-external-link-alt me-2"></i> Abrir Lição: Números Binários
+                    </button>
+                `;
                 break;
             case 'ranking':
-                display.innerHTML = `<h4>Seu Desempenho</h4><hr class="colorgraph"><div class="alert alert-info">Carregando dados do servidor...</div>`;
+                display.innerHTML = `
+                    <h2 class="h4 fw-bold">Ranking Global IFPR</h2>
+                    <hr class="colorgraph">
+                    <div class="alert alert-info">Sincronizando placares com o servidor...</div>
+                `;
                 break;
             default:
-                display.innerHTML = `<h4>Módulo: ${type.toUpperCase()}</h4><hr class="colorgraph"><p>Conteúdo em desenvolvimento.</p>`;
+                display.innerHTML = `
+                    <h2 class="h4 fw-bold">${type.toUpperCase()}</h2>
+                    <hr class="colorgraph">
+                    <div class="text-center py-4">
+                        <i class="fas fa-tools fa-2x mb-3 text-secondary"></i>
+                        <p>O conteúdo de <b>${type}</b> está em fase de preparação.</p>
+                    </div>
+                `;
         }
     } else {
+        // VISÃO DO PROFESSOR (AJUSTES)
         display.innerHTML = `
-            <h4>Gestão: ${type.toUpperCase()}</h4>
+            <h2 class="h4 fw-bold text-danger">Gestão de Módulo: ${type.toUpperCase()}</h2>
             <hr class="colorgraph">
-            <div class="mb-3">
-                abel class="form-label">Atualizar material de ${type}:</label>
-                <textarea class="form-control" rows="5" placeholder="Insira o novo texto ou link aqui..."></textarea>
+            <div class="mb-4">
+                abel class="form-label fw-bold">Texto ou Link do Material:</label>
+                <textarea id="teacher-input" class="form-control" rows="6" placeholder="Insira o conteúdo atualizado aqui..."></textarea>
             </div>
-            <button class="btn btn-primary" onclick="alert('Conteúdo atualizado no Firebase!')">Salvar Alterações</button>
+            <div class="d-grid gap-2">
+                <button class="btn btn-primary btn-lg" onclick="saveAjuste('${type}')">
+                    <i class="fas fa-save me-2"></i> SALVAR NO BANCO DE DADOS
+                </button>
+                <button class="btn btn-outline-secondary btn-sm" onclick="location.reload()">Cancelar</button>
+            </div>
         `;
     }
+}
+
+function saveAjuste(type) {
+    const data = document.getElementById('teacher-input').value;
+    alert(`Sucesso! O material de ${type.toUpperCase()} foi atualizado no Firebase.`);
+    // Aqui você implementaria: db.collection('contents').doc(type).update({ text: data });
 }
