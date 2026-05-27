@@ -1,7 +1,7 @@
 document.addEventListener("DOMContentLoaded", () => {
     firebase.auth().onAuthStateChanged(user => {
         if (user) {
-            verifycontents('PzGOAbkw0oZGIwF49RLk');
+            verifyContents('PzGOAbkw0oZGIwF49RLk');
         } else {
             // Fallback caso o auth-guard não intercepte
             window.location.href = `${location.origin}/app-educacional/html/login/login.html`;
