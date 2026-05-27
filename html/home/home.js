@@ -26,7 +26,7 @@ async function verifyUserProfile(user) {
           nameUserElement.textContent = userData.nickname;
         }
         if (avatarUserElement) {
-          const avatarPath = `${location.origin}/app-educational/assets/img/perfil/${userData.avatar}.png`;
+          const avatarPath = `${location.origin}/app-educacional/assets/img/perfil/${userData.avatar}.png`;
           avatarUserElement.innerHTML = `
             <img 
               src="${avatarPath}" 
