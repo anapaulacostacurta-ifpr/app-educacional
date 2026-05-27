@@ -10,7 +10,7 @@ function logout() {
   firebase.auth().signOut()
     .then(() => {
       // Redirecionamento absoluto baseado na origem atual do site
-      const loginUrl = `${location.origin}/projetoGamificaEduk/html/login/login.html`;
+      const loginUrl = `${location.origin}/app-educacional/html/login/login.html`;
       console.log("Logout realizado com sucesso.");
       window.location.href = loginUrl;
     })
