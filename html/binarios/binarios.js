@@ -12,18 +12,22 @@ let appState = {
     }
 };
 
+let binState = {
+    xp: 0,
+    quiz: { q: "O número 2 em binário é?", a: "10" }
+};
+
 document.addEventListener("DOMContentLoaded", () => {
-    // Detectar usuário (Padrão do seu home.js)
     firebase.auth().onAuthStateChanged(user => {
         if (user) {
-            document.getElementById('user-name-display').innerText = user.email.split('@')[0];
-            renderApp();
-        } else {
+            document.getElementById('user-display-name').innerText = user.email;
+            renderQuiz();
+        }else {
             window.location.href = "../login/login.html";
         }
     });
 });
-
+      
 function toggleTeacherView() {
     document.getElementById('view-student').classList.toggle('d-none');
     document.getElementById('view-teacher').classList.toggle('d-none');
@@ -80,4 +84,52 @@ function saveToDatabase() {
     alert("Dados salvos! Voltando para visão do aluno.");
     renderApp();
     toggleTeacherView();
+}
+
+// RESOLVE O ERRO: completeContent is not defined
+function completeContent() {
+    binState.xp += 20;
+    updateXPUI();
+    alert("Aula concluída! +20 XP adicionados.");
+}
+
+function renderQuiz() {
+    const area = document.getElementById('quiz-area');
+    area.innerHTML = `
+        <p class="small fw-bold">${binState.quiz.q}</p>
+        <div class="option mb-2 p-2 border rounded" onclick="check(this, '10')">10</div>
+        <div class="option mb-2 p-2 border rounded" onclick="check(this, '01')">01</div>
+    `;
+}
+
+function check(el, val) {
+    if(val === binState.quiz.a) {
+        el.classList.add('correct');
+        binState.xp += 50;
+        updateXPUI();
+        alert("Correto! +50 XP");
+    } else {
+        el.classList.add('incorrect');
+    }
+}
+
+function updateXPUI() {
+    document.getElementById('xp-val').innerText = binState.xp;
+    document.getElementById('lvl-val').innerText = Math.floor(binState.xp / 100) + 1;
+}
+
+function toggleTeacherView() {
+    document.getElementById('view-student').classList.toggle('d-none');
+    document.getElementById('view-teacher').classList.toggle('d-none');
+}
+
+function saveToDatabase() {
+    const q = document.getElementById('in-q').value;
+    const a = document.getElementById('in-a').value;
+    if(q && a) {
+        binState.quiz = { q, a };
+        renderQuiz();
+        toggleTeacherView();
+        alert("Quiz atualizado para a turma!");
+    }
 }
