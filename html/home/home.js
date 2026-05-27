@@ -8,6 +8,43 @@ document.addEventListener("DOMContentLoaded", () => {
             // Fallback caso o auth-guard não intercepte
             window.location.href = `${location.origin}/app-educacional/html/login/login.html`;
         }
+
+        // Busca os dados do usuário logado no Firestore
+      userService.findByUid(user.uid)
+        .then(userData => {
+          // Verifica se o perfil é jogador
+          if (userData.profile === "player") {
+            // Exibe nome e avatar
+            const nameUserElement = document.getElementById("nameUser");
+            const avatarUserElement = document.getElementById("avatarUser");
+
+            if (nameUserElement) {
+              nameUserElement.textContent = userData.nickname;
+            }
+
+            if (avatarUserElement) {
+              const avatarPath = `${location.origin}/app-educational/assets/img/perfil/${userData.avatar}.png`;
+              avatarUserElement.innerHTML = `
+                <img 
+                  src="${avatarPath}" 
+                  class="img-fluid rounded-circle img-thumbnail" 
+                  alt="Avatar de ${userData.nickname}" 
+                  width="50" 
+                  height="50"
+                />`;
+            }
+
+          } else {
+            // Usuário com perfil diferente → acesso negado
+            alert("Seu perfil não tem acesso a essa página.");
+            window.location.href = `${location.origin}/projetoGamificaEduk/html/login/login.html`;
+          }
+        })
+        .catch(error => {
+          console.error("Erro ao buscar dados do usuário:", error);
+          alert("Erro ao carregar seu perfil. Tente novamente.");
+          window.location.href = `${location.origin}/app-educacional/html/login/login.html`;
+        });
     });
 });
 
