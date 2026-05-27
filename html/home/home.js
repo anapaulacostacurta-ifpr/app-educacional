@@ -17,11 +17,13 @@ async function verifyUserProfile(user) {
     // Exemplo: const profile = await userService.getProfile(user.uid);
     
     // Simulação para teste (troque manualmente para testar as duas visões)
-    const userRole = (user.email.includes('professor') || user.email.includes('ana')) ? 'professor' : 'aluno';
-    
-    renderMenu(userRole);
-    document.getElementById('profile-tag').innerText = `Perfil: ${userRole.toUpperCase()}`;
-    document.getElementById('content-display').innerHTML = `<h3>Bem-vindo, ${user.email.split('@')[0]}!</h3><p>Selecione uma opção no menu ao lado.</p>`;
+    // Busca dados do usuário autenticado no Firestore
+    userService.findByUid(user.uid).then(userData => {
+      const userRole = userData.profile == "host" ? 'Professor' : 'Estudante';
+      
+      renderMenu(userRole);
+      document.getElementById('profile-tag').innerText = `Perfil: ${userRole.toUpperCase()}`;
+      document.getElementById('content-display').innerHTML = `<h3>Bem-vindo, ${user.email.split('@')[0]}!</h3><p>Selecione uma opção no menu ao lado.</p>`;
 }
 
 function renderMenu(role) {
