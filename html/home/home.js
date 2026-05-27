@@ -37,7 +37,8 @@ function renderMenu(role) {
             { id: 'video', label: 'Vídeo Aula', icon: 'fa-play-circle' },
             { id: 'jogo', label: 'Jogar Desafio', icon: 'fa-gamepad' },
             { id: 'ranking', label: 'Ranking e Desempenho', icon: 'fa-chart-line' },
-            { id: 'caca', label: 'Caça-palavras', icon: 'fa-search' }
+            { id: 'caca', label: 'Caça-palavras', icon: 'fa-search' },
+            { id: 'sair', label: 'Sair', icon: 'fa-logout'}
         ];
         
         menu.innerHTML = options.map(opt => `
@@ -48,7 +49,7 @@ function renderMenu(role) {
         `).join('');
         
     } else {
-        const options = ['Conteúdo', 'Video', 'Jogo', 'Ranking', 'Caça-palavras'];
+        const options = ['Conteúdo', 'Video', 'Jogo', 'Ranking', 'Caça-palavras', 'Sair'];
         
         menu.innerHTML = options.map(opt => `
             <button class="list-group-item list-group-item-action p-3 border-0 d-flex align-items-center" 
@@ -90,6 +91,11 @@ function loadContent(type, role) {
                     <div class="alert alert-info">Sincronizando placares com o servidor...</div>
                 `;
                 break;
+            case 'sair':
+                // Chama a função logout() importada do seu arquivo logout.js
+                if (confirm("Deseja realmente sair do GamificaEduk?")) {
+                    logout(); 
+                }
             default:
                 display.innerHTML = `
                     <h2 class="h4 fw-bold">${type.toUpperCase()}</h2>
@@ -123,4 +129,18 @@ function saveAjuste(type) {
     const data = document.getElementById('teacher-input').value;
     alert(`Sucesso! O material de ${type.toUpperCase()} foi atualizado no Firebase.`);
     // Aqui você implementaria: db.collection('contents').doc(type).update({ text: data });
+}
+
+function logout() {
+  firebase.auth().signOut()
+    .then(() => {
+      // Redirecionamento absoluto baseado na origem atual do site
+      const loginUrl = `${location.origin}/app-educacional/html/login/login.html`;
+      console.log("Logout realizado com sucesso.");
+      window.location.href = loginUrl;
+    })
+    .catch(error => {
+      console.error("Erro ao fazer logout:", error);
+      alert("Erro ao fazer logout! Tente novamente.");
+    });
 }

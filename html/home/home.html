@@ -30,13 +30,14 @@
                 <h1 class="h5 mb-0 fw-bold text-uppercase flex-grow-1" style="letter-spacing: 1px;">GamificaEduk</h1>
                 
                 <div class="d-flex align-items-center gap-2">
-                    <!-- Tag de Perfil -->
-                    <span id="profile-tag" class="badge bg-light text-primary d-none d-md-inline-block p-2">Carregando...</span>
-                    
-                    <!-- Botão Sair -->
-                    <button onclick="logout()" class="btn btn-danger rounded-circle border-white shadow-sm" style="width: 40px; height: 40px;">
-                        <i class="fas fa-power-off"></i>
-                    </button>
+                    <!-- Perfil do usuário -->
+                    <div id="profile" class="text-center ms-auto">
+                        <p class="mb-0">
+                            <span id="avatarUser" aria-hidden="true"></span><br>
+                            <span id="nameUser"></span>
+                        </p>
+                    </div>
+                
                 </div>
             </div>
         </header>
@@ -45,7 +46,7 @@
         <div class="offcanvas offcanvas-start shadow" tabindex="-1" id="offcanvasMenu" style="width: 280px; z-index: 1070;">
             <div class="offcanvas-header bg-primary text-white">
                 <h5 class="offcanvas-title fw-bold">MENU NAVEGAÇÃO</h5>
-                <button type="button" class="btn-close btn-close-white" data-bs-dismiss="offcanvas" aria-label="Close"></button>
+                <button type="button" class="btn-close btn-close-" data-bs-dismiss="offcanvas" aria-label="Close"></button>
             </div>
             <div class="offcanvas-body p-0">
                 <!-- Seu gradiente padrão -->
