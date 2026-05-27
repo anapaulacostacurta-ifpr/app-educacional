@@ -46,32 +46,45 @@ function renderMenu(role) {
     const menu = document.getElementById('main-menu');
     
     if (role === 'aluno') {
-        const options = [
-            { id: 'conteudo', label: 'Conteúdo', icon: 'fa-book-open' },
-            { id: 'video', label: 'Vídeo Aula', icon: 'fa-play-circle' },
-            { id: 'jogo', label: 'Jogar Desafio', icon: 'fa-gamepad' },
-            { id: 'ranking', label: 'Ranking e Desempenho', icon: 'fa-chart-line' },
-            { id: 'caca', label: 'Caça-palavras', icon: 'fa-search' },
-            { id: 'sair', label: 'Sair', icon: 'fa-logout'}
-        ];
+        const options = role === 'aluno' ? [
+        { id: 'conteudo', label: 'Conteúdo', icon: 'fa-book-open' },
+        { id: 'video', label: 'Vídeo Aula', icon: 'fa-play-circle' },
+        { id: 'jogo', label: 'Jogar Desafio', icon: 'fa-gamepad' },
+        { id: 'ranking', label: 'Ranking', icon: 'fa-chart-line' },
+        { id: 'caça', label: 'Caça-Palavras', icon: 'fa-search' },
+        { id: 'sair', label: 'Sair', icon: 'fa-sign-out-alt' }
+        ] : ['Conteúdo', 'Video', 'Jogo', 'Ranking'];
         
-        menu.innerHTML = options.map(opt => `
-            <button class="list-group-item list-group-item-action p-3 border-0 d-flex align-items-center" 
-                    onclick="selectMenuOption('${opt.id}', 'aluno')">
-                <i class="fas ${opt.icon} me-3 text-primary" style="width: 20px;"></i> ${opt.label}
-            </button>
-        `).join('');
-        
-    } else {
-        const options = ['Conteúdo', 'Video', 'Jogo', 'Ranking', 'Caça-palavras', 'Sair'];
-        
-        menu.innerHTML = options.map(opt => `
-            <button class="list-group-item list-group-item-action p-3 border-0 d-flex align-items-center" 
-                    onclick="selectMenuOption('${opt.toLowerCase()}', 'professor')">
-                <i class="fas fa-edit me-3 text-danger" style="width: 20px;"></i> Ajustar ${opt}
-            </button>
-        `).join('');
+        menu.innerHTML = options.map(opt => {
+            const id = typeof opt === 'string' ? opt.toLowerCase() : opt.id;
+            const label = typeof opt === 'string' ? `Ajustar ${opt}` : opt.label;
+            const icon = typeof opt === 'string' ? 'fa-edit' : opt.icon;
+            
+            return `
+                <button class="list-group-item list-group-item-action p-3 border-0 d-flex align-items-center" 
+                        onclick="openModule('${id}', '${role}')">
+                    <i class="fas ${icon} me-3 ${role === 'aluno' ? 'text-primary' : 'text-danger'}"></i> ${label}
+                </button>
+            `;
+        }).join('');
+}
+
+function openModule(id, role) {
+    // Fecha o menu lateral
+    const instance = bootstrap.Offcanvas.getInstance(document.getElementById('offcanvasMenu'));
+    if(instance) instance.hide();
+
+    if (id === 'sair') {
+        if (confirm("Deseja sair?")) logout();
+        return;
     }
+
+    const iframe = document.getElementById('content-iframe');
+    // Define o caminho do arquivo: ex: ../binarios/binarios.html
+    // Ajuste aqui para o nome real dos seus arquivos de conteúdo
+    const page = role === 'professor' ? `../${id}/ajustar_${id}.html` : `../${id}/${id}.html`;
+    
+    iframe.src = page;
 }
 
 // Fecha o menu lateral e carrega o conteúdo
