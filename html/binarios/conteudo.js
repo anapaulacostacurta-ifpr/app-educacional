@@ -1,3 +1,4 @@
+
 document.addEventListener("DOMContentLoaded", () => {
     firebase.auth().onAuthStateChanged(user => {
         if (user) {
@@ -9,6 +10,7 @@ document.addEventListener("DOMContentLoaded", () => {
     });
 
     async function verifyContents(uid){ 
+        const db = firebase.firestore();
         // Aqui use o ID do documento que você criou no Firebase
         // Supondo que o ID do documento seja 'binarios'
         db.collection('contents').doc(uid).get().then(doc => {
