@@ -50,10 +50,10 @@ function renderMenu(role) {
         { id: 'conteudo', label: 'Conteúdo', icon: 'fa-book-open' },
         { id: 'video', label: 'Vídeo Aula', icon: 'fa-play-circle' },
         { id: 'jogo', label: 'Jogar Desafio', icon: 'fa-gamepad' },
+        { id: 'cacapalavras', label: 'Caça-Palavras', icon: 'fa-search' },
         { id: 'ranking', label: 'Ranking', icon: 'fa-chart-line' },
-        { id: 'caça', label: 'Caça-Palavras', icon: 'fa-search' },
         { id: 'sair', label: 'Sair', icon: 'fa-sign-out-alt' }
-        ] : ['Conteúdo', 'Video', 'Jogo', 'Ranking'];
+        ] : ['Conteúdo', 'Video', 'Jogo', 'Caça-Palavras', 'Ranking', 'Sair'];
         
         menu.innerHTML = options.map(opt => {
             const id = typeof opt === 'string' ? opt.toLowerCase() : opt.id;
@@ -79,11 +79,18 @@ function openModule(id, role) {
         if (confirm("Deseja sair?")) logout();
         return;
     }
+   
 
     const iframe = document.getElementById('content-iframe');
     // Define o caminho do arquivo: ex: ../binarios/binarios.html
     // Ajuste aqui para o nome real dos seus arquivos de conteúdo
-    const page = role === 'professor' ? `../${id}/ajustar_${id}.html` : `../binarios/${id}.html`;
+    var page = `../binarios/conteudo.html`;
+    if (id === 'ranking'){
+        page = `../${id}/${id}.html`;
+        iframe.src = page;
+        return;
+    }
+    page = role === 'professor' ? `../${id}/ajustar_${id}.html` : `../binarios/${id}.html`;
     
     iframe.src = page;
 }
