@@ -17,12 +17,13 @@ let binState = {
     quiz: { q: "O número 2 em binário é?", a: "10" }
 };
 
+
 document.addEventListener("DOMContentLoaded", () => {
     firebase.auth().onAuthStateChanged(user => {
         if (user) {
             document.getElementById('user-display-name').innerText = user.email;
-            renderQuiz();
-        }else {
+            checkProfileAndRender(user);
+        } else {
             window.location.href = "../login/login.html";
         }
     });
@@ -131,5 +132,23 @@ function saveToDatabase() {
         renderQuiz();
         toggleTeacherView();
         alert("Quiz atualizado para a turma!");
+    }
+}
+
+async function checkProfileAndRender(user) {
+    // Simulação de verificação de perfil (Igual à Home)
+    const isTeacher = user.email.includes('professor') || user.email.includes('ana');
+    
+    if (isTeacher) {
+        // Mostra visão do professor
+        document.getElementById('view-student').classList.add('d-none');
+        document.getElementById('view-teacher').classList.remove('d-none');
+        document.getElementById('profile-tag').innerText = "PROFESSOR";
+    } else {
+        // Mostra visão do aluno
+        document.getElementById('view-student').classList.remove('d-none');
+        document.getElementById('view-teacher').classList.add('d-none');
+        document.getElementById('profile-tag').innerText = "ESTUDANTE";
+        renderQuiz(); // Carrega o desafio para o aluno
     }
 }
