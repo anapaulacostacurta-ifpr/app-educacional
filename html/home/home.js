@@ -12,11 +12,10 @@ document.addEventListener("DOMContentLoaded", () => {
 });
 
 async function verifyUserProfile(user) {
-    // Busca o perfil do usuário no Firestore
+    console.log("Verificando perfil do usuário:", user.uid); // Veja se aparece no console (F12)
     userService.findByUid(user.uid).then(userData => {
-        // Identifica se é host (professor) ou player (aluno)
+        console.log("Dados do Firestore:", userData); // Veja se o perfil é 'host' ou 'player'
         const role = userData.profile === "host" ? 'professor' : 'aluno';
-        
         renderMenu(role);
         
         // Atualiza a tag de perfil no header

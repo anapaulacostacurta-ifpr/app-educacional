@@ -17,54 +17,64 @@
         <script src="../../services/user.service.js"></script>
         <script src="../../logout.js"></script>
     </head>
-   <body class="wallpaper">
-        <!-- Container principal -->
-        <main class="container my-3">
-            <div class="card card-container shadow-sm">
-                <!-- Navegação / Cabeçalho -->
-                <header>
-                    <nav class="navbar navbar-expand-sm">
-                        <!-- Menu suspenso -->
-                        <div class="dropdown me-auto">
-                            <button 
-                                class="btn btn-secondary dropdown-toggle" 
-                                type="button" 
-                                id="dropdownMenuLink" 
-                                data-bs-toggle="dropdown" 
-                                aria-expanded="false">
-                                Menu
-                            </button>
-                            <ul class="dropdown-menu" aria-labelledby="dropdownMenuLink">
-                                <li><hr class="dropdown-divider"></li>
-                                <li><a class="dropdown-item" href="#" onclick="logout()">Sair</a></li>
-                            </ul>
-                        </div>
+    <body class="wallpaper">
 
-                        <!-- Perfil do usuário -->
-                        <div id="profile" class="ms-auto text-center">
-                            <p class="mb-0">
-                                <span id="avatarUser" aria-hidden="true"></span><br>
-                                <span id="nameUser" aria-label="Nome do usuário"></span>
-                            </p>
-                        </div>
-                    </nav>
-                </header>
+        <!-- Header com Z-index para visibilidade garantida -->
+        <header class="p-3 text-white sticky-top shadow-lg" style="background-color: rgba(13, 110, 253, 0.9); z-index: 1060;">
+            <div class="container-fluid d-flex align-items-center">
+                <!-- Ícone Hamburger (Menu Lateral) -->
+                <button class="btn btn-link text-white p-0 me-3" type="button" data-bs-toggle="offcanvas" data-bs-target="#offcanvasMenu" style="text-decoration: none;">
+                    <i class="fas fa-bars fa-2x"></i>
+                </button>
+                
+                <h1 class="h5 mb-0 fw-bold text-uppercase flex-grow-1" style="letter-spacing: 1px;">GamificaEduk</h1>
+                
+                <div class="d-flex align-items-center gap-2">
+                    <!-- Tag de Perfil -->
+                    <span id="profile-tag" class="badge bg-light text-primary d-none d-md-inline-block p-2">Carregando...</span>
+                    
+                    <!-- Botão Sair -->
+                    <button onclick="logout()" class="btn btn-danger rounded-circle border-white shadow-sm" style="width: 40px; height: 40px;">
+                        <i class="fas fa-power-off"></i>
+                    </button>
+                </div>
+            </div>
+        </header>
 
-                <!-- Área de exibição de funcionalidades com iframe -->
-                <div class="iframe-wrapper">
-                    <iframe  
-                        id="iframe_actions" 
-                        name="iframe_actions"
-                        title="Funcionalidades Dinâmicas"
-                        frameborder="0"
-                        allowfullscreen
-                        loading="lazy">
-                    </iframe>
+        <!-- Menu Lateral Oculto (Offcanvas) -->
+        <div class="offcanvas offcanvas-start shadow" tabindex="-1" id="offcanvasMenu" style="width: 280px; z-index: 1070;">
+            <div class="offcanvas-header bg-primary text-white">
+                <h5 class="offcanvas-title fw-bold">MENU NAVEGAÇÃO</h5>
+                <button type="button" class="btn-close btn-close-white" data-bs-dismiss="offcanvas" aria-label="Close"></button>
+            </div>
+            <div class="offcanvas-body p-0">
+                <!-- Seu gradiente padrão -->
+                <hr class="colorgraph m-0" style="height: 6px;">
+                
+                <!-- Botões dinâmicos carregados via home.js -->
+                <div id="main-menu" class="list-group list-group-flush">
+                    <div class="text-center py-5">
+                        <div class="spinner-border text-primary" role="status"></div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Área de Conteúdo Central -->
+        <main class="container my-4">
+            <div class="card card-container shadow-sm border-0">
+                <div id="content-display">
+                    <!-- Conteúdo inicial -->
+                    <div class="text-center py-5">
+                        <i class="fas fa-hand-pointer fa-3x text-muted opacity-25 mb-3"></i>
+                        <h2 class="h5 text-muted">Bem-vindo ao GamificaEduk</h2>
+                        <p class="text-muted small px-3">Toque no menu superior para acessar seus conteúdos, jogos e ranking.</p>
+                    </div>
                 </div>
             </div>
         </main>
 
-        <!-- Scripts no final do body para otimização -->
+        <!-- Scripts Finais -->
         <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
         <script src="home.js"></script>
     </body>
