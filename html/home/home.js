@@ -67,6 +67,7 @@ function renderMenu(role) {
                 </button>
             `;
         }).join('');
+    }
 }
 
 function openModule(id, role) {
