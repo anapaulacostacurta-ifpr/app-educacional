@@ -1,4 +1,5 @@
 const db = firebase.firestore();
+
 document.addEventListener("DOMContentLoaded", () => {
     // Garante que o Firebase está inicializado antes de buscar
     firebase.auth().onAuthStateChanged((user) => {
@@ -13,8 +14,7 @@ document.addEventListener("DOMContentLoaded", () => {
  * 1. Carrega o Ranking de Líderes (Top 10)
  * Ordenado por Score (Pontos)
  */
-function loadLeaderboard() {
-    const db = firebase.firestore();
+async function loadLeaderboard() {
     const rankingBody = document.getElementById("ranking-body");
 
     // Placeholder de carregamento
@@ -55,8 +55,8 @@ function loadLeaderboard() {
  * 2. Carrega a Precisão da Turma
  * Mostra a porcentagem de acertos de cada aluno
  */
-function loadPerformanceMetrics() {
-    const db = firebase.firestore();
+async function loadPerformanceMetrics() {
+
     const performanceList = document.getElementById("performance-list");
 
     performanceList.innerHTML = `<p class="text-center opacity-50">Calculando métricas...</p>`;
