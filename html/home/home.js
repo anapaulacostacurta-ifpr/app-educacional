@@ -79,7 +79,6 @@ function openModule(id, role) {
         if (confirm("Deseja sair?")) logout();
         return;
     }
-   
 
     const iframe = document.getElementById('content-iframe');
     // Define o caminho do arquivo: ex: ../binarios/binarios.html
@@ -89,9 +88,9 @@ function openModule(id, role) {
         page = `../${id}/${id}.html`;
         iframe.src = page;
         return;
+    }else{
+        page = role === 'professor' ? `../${id}/ajustar_${id}.html` : `../binarios/${id}.html`;
     }
-    page = role === 'professor' ? `../${id}/ajustar_${id}.html` : `../binarios/${id}.html`;
-    
     iframe.src = page;
 }
 
