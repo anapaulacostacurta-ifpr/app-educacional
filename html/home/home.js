@@ -50,7 +50,6 @@ function renderMenu(role) {
         { id: 'conteudo', label: 'Conteúdo', icon: 'fa-book-open' },
         { id: 'video', label: 'Vídeo Aula', icon: 'fa-play-circle' },
         { id: 'quiz', label: 'Quiz', icon: 'fa-quiz' },
-        { id: 'jogo', label: 'Jogar Desafio', icon: 'fa-gamepad' },
         { id: 'caca_palavras', label: 'Caça-Palavras', icon: 'fa-search' },
         { id: 'ranking', label: 'Ranking', icon: 'fa-chart-line' },
         { id: 'sair', label: 'Sair', icon: 'fa-sign-out-alt' }
