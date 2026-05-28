@@ -1,6 +1,6 @@
 // quiz.js - Lógica de Puzzles com Respostas em Coleção Separada
 
-const questionIds = ['72ALJlqfXNsgrB10TgKn', 'OUTRO_ID_AQUI']; 
+const questionIds = ['72ALJlqfXNsgrB10TgKn', '0pfahasf6Q8Bs660sgCH']; 
 
 let questionsData = [];
 let currentIndex = 0;
