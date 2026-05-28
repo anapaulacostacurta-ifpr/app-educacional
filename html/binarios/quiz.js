@@ -106,11 +106,44 @@ function validatePuzzle() {
     }
 }
 
-function updateScoreboard(val) {
+/**
+ * Sincroniza o resultado do Quiz/Puzzle com a coleção principal de ranking.
+ * Garante que todos os campos obrigatórios (uid, name, nickname) sejam preenchidos.
+ */
+async function updateScoreboard(val) {
     const user = firebase.auth().currentUser;
-    // Sincroniza com a coleção principal de ranking do projeto
-    db.collection("scoreboards").doc(user.uid).set({
-        score: firebase.firestore.FieldValue.increment(val),
-        lastPuzzleSolved: firebase.firestore.FieldValue.serverTimestamp()
-    }, { merge: true });
+    if (!user) return;
+
+    const db = firebase.firestore();
+
+    try {
+        // 1. Coleta dados de perfil na coleção 'users' para evitar nomes em branco no ranking
+        const userDoc = await db.collection("users").doc(user.uid).get();
+        let userName = "Estudante";
+        let userNickname = "Player";
+
+        if (userDoc.exists) {
+            const userData = userDoc.data();
+            userName = userData.name || "Estudante";
+            userNickname = userData.nickname || userData.name || "Player";
+        }
+
+        // 2. Sincroniza com a coleção principal 'scoreboards'
+        await db.collection("scoreboards").doc(user.uid).set({
+            uid: user.uid,
+            name: userName,
+            nickname: userNickname,
+            // Soma o XP (positivo ou negativo) de forma segura no servidor
+            score: firebase.firestore.FieldValue.increment(Number(val)),
+            // Define o timestamp da última jogada/atividade
+            lastPlayed: firebase.firestore.FieldValue.serverTimestamp(),
+            // Campo específico para rastreio de puzzles (opcional)
+            lastPuzzleSolved: firebase.firestore.FieldValue.serverTimestamp() 
+        }, { merge: true });
+
+        console.log(`✅ Scoreboard atualizado: ${val > 0 ? '+' : ''}${val} XP para o aluno.`);
+
+    } catch (error) {
+        console.error("Erro ao atualizar o scoreboard no Quiz:", error);
+    }
 }

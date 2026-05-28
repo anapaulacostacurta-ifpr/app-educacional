@@ -100,16 +100,38 @@ function markWordAsFound(word, coords) {
     }
 }
 
-function saveXP(amount) {
+async function saveXP(amount) {
     const user = firebase.auth().currentUser;
-    if (user) {
-        const db = firebase.firestore();
-        // Incrementa XP na coleção scoreboards do seu projeto
-        db.collection("scoreboards").doc(user.uid).set({
-            score: firebase.firestore.FieldValue.increment(amount),
-            lastActivity: firebase.firestore.FieldValue.serverTimestamp()
-        }, { merge: true }).then(() => {
-            console.log("XP de Caça-palavras salvo!");
-        });
+    if (!user) return;
+
+    const db = firebase.firestore();
+
+    try {
+        // 1. Busca os dados de perfil para manter o ranking consistente
+        const userDoc = await db.collection("users").doc(user.uid).get();
+        let userName = "Estudante";
+        let userNickname = "Player";
+
+        if (userDoc.exists) {
+            const userData = userDoc.data();
+            userName = userData.name || "Estudante";
+            userNickname = userData.nickname || userData.name || "Player";
+        }
+
+        // 2. Grava/Incrementa na coleção scoreboards
+        await db.collection("scoreboards").doc(user.uid).set({
+            uid: user.uid,
+            name: userName,
+            nickname: userNickname,
+            // Incrementa o score atual com o novo valor (ex: +20)
+            score: firebase.firestore.FieldValue.increment(Number(amount)),
+            // Alinhado com seu requisito anterior
+            lastPlayed: firebase.firestore.FieldValue.serverTimestamp()
+        }, { merge: true });
+
+        console.log(`🎉 Sucesso: +${amount} XP adicionados ao scoreboard.`);
+
+    } catch (error) {
+        console.error("Erro ao sincronizar XP do Caça-palavras:", error);
     }
 }

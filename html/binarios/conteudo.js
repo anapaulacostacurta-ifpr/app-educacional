@@ -96,26 +96,62 @@ function toggleCard(id, expand) {
     }
 }
 
-// Função para Contabilizar Pontos
-function markComplete(id, points) {
+/**
+ * Marca o tópico como concluído, aplica feedback visual e sincroniza XP no Firestore.
+ */
+async function markComplete(id, points) {
     if (completedTasks.has(id)) {
         alert("Você já concluiu este tópico!");
         return;
     }
 
-    completedTasks.add(id);
-    totalXP += points;
+    const user = firebase.auth().currentUser;
+    if (!user) return;
 
-    // Feedback Visual
-    const card = document.getElementById(`card-${id}`);
-    card.classList.add('completed-card');
-    
-    toggleCard(id, false); // Recolhe após concluir
-    document.getElementById(`btn-expand-${id}`).innerHTML = `Concluído <i class="fas fa-check-circle ms-1"></i>`;
-    document.getElementById(`btn-expand-${id}`).className = "btn btn-success btn-round px-3 disabled";
+    const db = firebase.firestore();
 
-    alert(`Parabéns! +${points} XP adicionados à sua conta.`);
-    
-    // Opcional: Enviar para o Firebase do usuário
-    // userService.updateXP(firebase.auth().currentUser.uid, totalXP);
+    try {
+        // 1. Busca dados de perfil do aluno para manter consistência no ranking
+        const userDoc = await db.collection("users").doc(user.uid).get();
+        let userName = "Estudante";
+        let userNickname = "Player";
+
+        if (userDoc.exists) {
+            const userData = userDoc.data();
+            userName = userData.name || "Estudante";
+            userNickname = userData.nickname || userData.name || "Player";
+        }
+
+        // 2. Registra a conclusão no Firestore seguindo seus requisitos de campos
+        await db.collection("scoreboards").doc(user.uid).set({
+            uid: user.uid,
+            name: userName,
+            nickname: userNickname,
+            score: firebase.firestore.FieldValue.increment(Number(points)),
+            lastPlayed: firebase.firestore.FieldValue.serverTimestamp(),
+            // Campo opcional para controle de leitura:
+            lastTopicCompleted: id 
+        }, { merge: true });
+
+        // 3. Atualização da Interface (Feedback Local)
+        completedTasks.add(id);
+        totalXP += points;
+
+        const card = document.getElementById(`card-${id}`);
+        if (card) card.classList.add('completed-card');
+        
+        // Recolhe o card e altera o botão
+        toggleCard(id, false); 
+        const btn = document.getElementById(`btn-expand-${id}`);
+        if (btn) {
+            btn.innerHTML = `Concluído <i class="fas fa-check-circle ms-1"></i>`;
+            btn.className = "btn btn-success btn-round px-3 disabled";
+        }
+
+        alert(`Parabéns! +${points} XP adicionados à sua conta.`);
+
+    } catch (error) {
+        console.error("Erro ao salvar conclusão do tópico:", error);
+        alert("Erro ao salvar progresso. Verifique sua conexão.");
+    }
 }
