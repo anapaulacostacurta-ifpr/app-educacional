@@ -12,11 +12,11 @@ let correctAttempts = 0;
 // Inicializa Autenticação
 firebase.auth().onAuthStateChanged((user) => {
     if (user) {
-        currentUser = user;
-        //loadPlayerProgress();
-        while (phase <=phase_total){
+        // 1. Primeiro carrega o progresso real do banco
+        loadPlayerProgress().then(() => {
+            // 2. Só gera o primeiro desafio APÓS saber em que fase o aluno está
             generateNewChallenge();
-        }
+        });
     } else {
         window.location.href = "../login/login.html";
     }
@@ -60,7 +60,17 @@ function updatePreview() {
 }
 
 function generateNewChallenge() {
-    // Reseta botões
+    // Verifica se o jogo acabou
+    if (phase > phase_total) {
+        document.getElementById("main-content").innerHTML = `
+            <div class="text-center p-5">
+                <h3>🏆 Missão Cumprida!</h3>
+                <p>Você completou todas as ${phase_total} fases.</p>
+            </div>`;
+        return;
+    }
+
+    // Reseta botões visualmente
     ['bit3', 'bit2', 'bit1', 'bit0'].forEach(id => {
         const btn = document.getElementById(id);
         btn.innerText = "0";
@@ -68,7 +78,7 @@ function generateNewChallenge() {
         btn.classList.add("btn-outline-dark");
     });
     
-    // Aumenta dificuldade baseada na fase
+    // Define dificuldade
     let max = phase <= 3 ? 7 : 15; 
     currentTargetDecimal = Math.floor(Math.random() * max) + 1;
     
