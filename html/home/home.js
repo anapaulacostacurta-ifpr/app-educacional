@@ -49,11 +49,12 @@ function renderMenu(role) {
         const options = role === 'aluno' ? [
         { id: 'conteudo', label: 'Conteúdo', icon: 'fa-book-open' },
         { id: 'video', label: 'Vídeo Aula', icon: 'fa-play-circle' },
+        { id: 'quiz', label: 'Quiz', icon: 'fa-quiz' },
         { id: 'jogo', label: 'Jogar Desafio', icon: 'fa-gamepad' },
         { id: 'caca_palavras', label: 'Caça-Palavras', icon: 'fa-search' },
         { id: 'ranking', label: 'Ranking', icon: 'fa-chart-line' },
         { id: 'sair', label: 'Sair', icon: 'fa-sign-out-alt' }
-        ] : ['Conteúdo', 'Video', 'Jogo', 'Caça-Palavras', 'Ranking', 'Sair'];
+        ] : ['Conteúdo', 'Video', 'Quiz', 'Jogo', 'Caça-Palavras', 'Ranking', 'Sair'];
         
         menu.innerHTML = options.map(opt => {
             const id = typeof opt === 'string' ? opt.toLowerCase() : opt.id;
